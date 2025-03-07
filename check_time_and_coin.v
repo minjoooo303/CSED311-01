@@ -17,6 +17,7 @@ module check_time_and_coin(clk,reset_n,i_input_coin,i_select_item,current_total,
 	output reg [31:0] wait_time;
 	output reg  [`kTotalBits-1:0] input_total; //추가
 	reg  [`kTotalBits-1:0]output_total,return_total;
+	reg [`kNumCoins-1:0] input_coin;
 
 	// initiate values
 	initial begin
@@ -34,16 +35,21 @@ module check_time_and_coin(clk,reset_n,i_input_coin,i_select_item,current_total,
 	// update coin return time
 	always @(i_input_coin, i_select_item) begin
 		// TODO: update coin return time
+		input_coin = i_input_coin;
+		output_total = input_total;
 		if (i_input_coin != 0 && (current_total==0 || current_total==1)) begin
 			
-			if ( i_input_coin == 3'b001 ) begin
-				output_total = input_total + coin_value[0];
+			if ( (input_coin & 3'b001) >0) begin
+				output_total += coin_value[0];
+				input_coin -= 3'b001;
 			end
-			else if ( i_input_coin == 3'b010 ) begin
-				output_total = input_total + coin_value[1];
+			if ( (input_coin & 3'b010) >0 ) begin
+				output_total += coin_value[1];
+				input_coin -= 3'b010;
 			end
-			else if ( i_input_coin == 3'b100 ) begin
-				output_total = input_total + coin_value[2];
+			if ( (input_coin & 3'b100) >0 ) begin
+				output_total += coin_value[2];
+				input_coin -= 3'b100;
 			end
 			else begin
 			end
@@ -51,16 +57,16 @@ module check_time_and_coin(clk,reset_n,i_input_coin,i_select_item,current_total,
 		else if ((i_select_item & o_available_item) && current_total==1) begin
 
 			if ( i_select_item == 4'b0001 ) begin
-				output_total = input_total- item_price[0];
+				output_total -= item_price[0];
 			end
 			else if ( i_select_item == 4'b0010 ) begin
-				output_total = input_total - item_price[1];
+				output_total -= item_price[1];
 			end
-			else if ( i_select_item == 3'b0100 ) begin
-				output_total = input_total- item_price[2];
+			else if ( i_select_item == 4'b0100 ) begin
+				output_total -= item_price[2];
 			end
 			else if(i_select_item==4'b1000) begin
-                output_total = input_total - item_price[3];
+                output_total -= item_price[3];
             end
 		end
             
@@ -69,8 +75,8 @@ module check_time_and_coin(clk,reset_n,i_input_coin,i_select_item,current_total,
 
 	always @(*) begin
 		// TODO: o_return_coin
-		o_return_coin = 3'b000;
 		return_total = input_total;
+		o_return_coin = 3'b000;
 
 		case (current_total)
 		0: begin 
@@ -87,22 +93,23 @@ module check_time_and_coin(clk,reset_n,i_input_coin,i_select_item,current_total,
 		end
 		3: begin
 			return_total = input_total;
+			o_return_coin = 3'b000;
 			if (return_total >= coin_value[2]) begin
-            	o_return_coin = 3'b100;
-				return_total = input_total -coin_value[2];
+				return_total -= coin_value[2];
+            	o_return_coin = o_return_coin | 3'b100;
 			end
         	if (return_total >= coin_value[1]) begin 
+				return_total -= coin_value[1];
             	o_return_coin = o_return_coin | 3'b010;
-				return_total = input_total -coin_value[1];
 			end
-        	else if (return_total >= coin_value[0])begin
+        	if (return_total >= coin_value[0])begin
+				return_total -= coin_value[0];
             	o_return_coin = o_return_coin | 3'b001;
-				return_total = input_total -coin_value[0];
 			end
-        	else begin
-            	o_return_coin = 3'b000;
-				return_total = input_total;
-			end
+        	// else begin
+            // 	o_return_coin = 3'b000;
+			// 	return_total = input_total;
+			// end
 		end
 		default: begin
 			o_return_coin=3'b000;
