@@ -58,6 +58,11 @@ module vending_machine (
 	wire [31:0] wait_time;
 
 
+	input [`kTotalBits-1:0] current_total;
+	input [31:0] item_price [`kNumItems-1:0];
+	input [31:0] coin_value [`kNumCoins-1:0];
+
+
 	// This module interface, structure, and given a number of modules are not mandatory but recommended.
 	// However, Implementations that use modules are mandatory.
 		
