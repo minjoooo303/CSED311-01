@@ -14,8 +14,8 @@ input_total,current_total_nxt,wait_time,o_return_coin,o_available_item,o_output_
 	input [`kTotalBits-1:0] current_total;
 	input [31:0] wait_time;
 	output reg [`kNumItems-1:0] o_available_item,o_output_item;
-	output reg  [`kTotalBits-1:0] input_total, current_total_nxt;// output_total, return_total,current_total_nxt;
-	integer i;	
+	output reg  current_total_nxt;// output_total, return_total,current_total_nxt;
+	input reg[`kTotalBits-1:0] input_total;
 
 
 
@@ -79,13 +79,13 @@ input_total,current_total_nxt,wait_time,o_return_coin,o_available_item,o_output_
 				o_available_item = 4'b0111;
 			end
 			else if (input_total >= item_price[1]) begin
-				o_available_item = 4'b0001;
+				o_available_item = 4'b0011;
 			end
 			else if (input_total >= item_price[0]) begin
 				o_available_item = 4'b0001;
 			end
 			else begin
-				o_available_item = 4'b0001;
+				o_available_item = 4'b0000;
 			end
 			o_output_item = i_select_item & o_available_item;
 		end
@@ -93,7 +93,7 @@ input_total,current_total_nxt,wait_time,o_return_coin,o_available_item,o_output_
 			o_available_item = 4'b0000;
 			o_output_item = 4'b0000;
 		end
-		input_total = input_total;
+
 	end
  
 	
