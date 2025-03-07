@@ -3,7 +3,7 @@
 	
 
 module calculate_current_state(i_input_coin,i_select_item,item_price,coin_value,current_total,
-input_total, output_total, return_total,current_total_nxt,wait_time,o_return_coin,o_available_item,o_output_item);
+input_total,current_total_nxt,wait_time,o_return_coin,o_available_item,o_output_item);
 
 
 	
@@ -14,7 +14,7 @@ input_total, output_total, return_total,current_total_nxt,wait_time,o_return_coi
 	input [`kTotalBits-1:0] current_total;
 	input [31:0] wait_time;
 	output reg [`kNumItems-1:0] o_available_item,o_output_item;
-	output reg  [`kTotalBits-1:0] input_total, output_total, return_total,current_total_nxt;
+	output reg  [`kTotalBits-1:0] input_total, current_total_nxt;// output_total, return_total,current_total_nxt;
 	integer i;	
 
 
@@ -25,7 +25,7 @@ input_total, output_total, return_total,current_total_nxt,wait_time,o_return_coi
 		// TODO: current_total_nxt
 		// You don't have to worry about concurrent activations in each input vector (or array).
 		// Calculate the next current_total state.
-		// Calculate the next current_total state.
+		
 		case(current_total)
 			0: begin // initial state
 				if (i_input_coin) begin
@@ -93,6 +93,7 @@ input_total, output_total, return_total,current_total_nxt,wait_time,o_return_coi
 			o_available_item = 4'b0000;
 			o_output_item = 4'b0000;
 		end
+		input_total = input_total;
 	end
  
 	
