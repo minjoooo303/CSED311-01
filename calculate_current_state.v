@@ -31,16 +31,26 @@ input_total, output_total, return_total,current_total_nxt,wait_time,o_return_coi
 				if (i_input_coin) begin
 					current_total_nxt = 1;
 				end
+				else begin
+					current_total_nxt = 0;
+				end
 			end
 			1: begin // waiting state
-				if (wait_time == 0) begin
-					current_total_nxt = 3;
-				end
-				else if (o_available_item > 0) begin
-					current_total_nxt = 2;
+				if (wait_time) begin
+					if (i_select_item) begin
+						if (o_available_item) begin
+							current_total_nxt = 2;
+						end
+						else begin
+							current_total_nxt = 1;
+						end
+					end
+					else begin
+						current_total_nxt = 1;
+					end
 				end
 				else begin
-					current_total_nxt = 1;
+					current_total_nxt = 3;
 				end
 			end
 			2: begin // dispense state
