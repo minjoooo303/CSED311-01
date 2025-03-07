@@ -97,7 +97,8 @@ module vending_machine (
 						.clk(clk),
 						.reset_n(reset_n),
 						.current_total_nxt(current_total_nxt),
-						.current_total(current_total));
+						.current_total(current_total),
+						.i_trigger_return(i_trigger_return));
 
 
 endmodule
