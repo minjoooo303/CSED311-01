@@ -11,7 +11,7 @@ module control_unit (    input [6:0] part_of_inst,
                     output wire alu_src,
                     output wire write_enable, // reg_write
                     output wire pc_to_reg,
-                    output wire is_ecall
+                    output reg is_ecall
                     
 );
     reg jalr_reg;
@@ -48,6 +48,7 @@ module control_unit (    input [6:0] part_of_inst,
         isLoad = 0;
         isRtype = 0;
         isSBtype = 0;
+        is_ecall = 0;
 
         case(part_of_inst[6:0])
             `ARITHMETIC: begin // R-type
@@ -72,6 +73,9 @@ module control_unit (    input [6:0] part_of_inst,
             `BRANCH: begin // B-type
                 isSBtype = 1;
                 branch_reg = 1;
+            end
+            `ECALL: begin
+                is_ecall = 1;
             end
             default: begin
             end
