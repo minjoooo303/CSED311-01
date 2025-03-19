@@ -5,9 +5,12 @@ module register_file(input	reset,
                      input [4:0] rd,           // destination register
                      input [31:0] rd_din,      // input data for rd
                      input write_enable,          // RegWrite signal
+                     input is_ecall,
                      output reg[31:0] rs1_dout,   // output of rs 1
                      output reg[31:0] rs2_dout,   // output of rs 2
-                     output [31:0] print_reg [0:31]);
+                     output [31:0] print_reg [0:31],
+                     output reg ishalted
+                     );
   integer i;
   // Register file
   reg [31:0] rf[0:31];
@@ -33,6 +36,12 @@ module register_file(input	reset,
   always @(posedge clk) begin
     if(write_enable && (rd != 0)) begin
         rf[rd] <= rd_din;
+    end
+  end
+
+  always @(is_ecall) begin
+    if(is_ecall && rf[17] == 10) begin
+      is_halted = 1;
     end
   end
 
