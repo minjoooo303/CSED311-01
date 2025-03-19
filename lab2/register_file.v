@@ -39,9 +39,10 @@ module register_file(input	reset,
     end
   end
 
-  always @(is_ecall) begin
+  always @(posedge clk) begin
+    ishalted <= 0;
     if(is_ecall && rf[17] == 10) begin
-      is_halted = 1;
+      ishalted <= 1;
     end
   end
 
