@@ -8,8 +8,8 @@ module alu ( 	input [2:0] alu_op,
 
 
 	always @(*) begin
+		alu_bcond = 0;
 		case (alu_op) 
-			alu_bcond = 0;
 			4'b0000: alu_result = alu_in_1 + alu_in_2; //ADD
 			4'b0001: begin //SUB, Branch
 				alu_result = alu_in_1 - alu_in_2;	
@@ -20,7 +20,7 @@ module alu ( 	input [2:0] alu_op,
 					2'b11: alu_bcond = (!alu_result[31]) ? 1 : 0; 		// BLT(Branch if Less Than), 마찬가지로 부호 확인.
 				endcase
 			end
-			4'b0010: alu_result = alu_in_1;
+			4'b0010: begin alu_result = alu_in_1; end
 			4'b0011: alu_result = ~alu_in_1; //NOT
 			4'b0100: alu_result = alu_in_1 & alu_in_2; //AND
 			4'b0101: alu_result = alu_in_1 | alu_in_2; //OR
