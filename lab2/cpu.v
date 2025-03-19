@@ -127,9 +127,11 @@ module cpu(input reset,                     // positive reset signal
     .rd (rd),           // input
     .rd_din (write_data_reg),       // input
     .write_enable (reg_write), // input
+    .is_ecall (is_ecall),
     .rs1_dout (rs1_dout),     // output
     .rs2_dout (rs2_dout),     // output
     .print_reg (print_reg)  //DO NOT TOUCH THIS
+    .ishalted(is_halted)
   );
 
   mux is_PCtoReg(
