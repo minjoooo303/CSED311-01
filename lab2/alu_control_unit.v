@@ -1,6 +1,6 @@
 `include "opcodes.v"
 
-module alucont (input [10:0] part_of_inst, 
+module alu_control_unit (input [10:0] part_of_inst, 
                 output reg[3:0] alu_op,
                 output reg [1:0] btype
 );
