@@ -173,7 +173,7 @@ module cpu(input reset,                     // positive reset signal
   // ---------- ALU Control Unit ----------
   alu_control_unit alu_ctrl_unit (
     .part_of_inst(alu_crtl_input),  // input
-    .alu_op(alu_op)         // output,
+    .alu_op(alu_op),         // output,
     .btype(btype)
   );
 
