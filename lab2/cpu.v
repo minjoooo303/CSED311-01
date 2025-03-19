@@ -69,6 +69,9 @@ module cpu(input reset,                     // positive reset signal
   assign rd = instruction[11:7];
   assign pc_src1 = (branch & alu_bcond) | is_jal;
 
+  // ALU Control
+  assign alu_crtl_input = {instruction[30], instruction[14:12], instruction[6:0]};
+
   /***** Register declarations *****/
 
   // ---------- Update program counter ----------
@@ -111,8 +114,8 @@ module cpu(input reset,                     // positive reset signal
   instruction_memory imem(
     .reset(reset),   // input
     .clk(clk),     // input
-    .addr(),    // input
-    .dout()     // output
+    .addr(current_pc),    // input
+    .dout(instruction)     // output
   );
 
   // ---------- Register File ----------
@@ -166,7 +169,7 @@ module cpu(input reset,                     // positive reset signal
 
   // ---------- ALU Control Unit ----------
   alu_control_unit alu_ctrl_unit (
-    .part_of_inst(),  // input
+    .part_of_inst(alu_crtl_input),  // input
     .alu_op(alu_op)         // output
   );
 
@@ -197,5 +200,6 @@ module cpu(input reset,                     // positive reset signal
     .in0(alu_result),    // input
     .out(data)     // output
   );
+ 
 
 endmodule
