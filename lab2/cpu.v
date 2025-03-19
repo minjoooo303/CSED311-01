@@ -70,6 +70,7 @@ module cpu(input reset,                     // positive reset signal
   assign pc_src1 = (branch & alu_bcond) | is_jal;
 
   // ALU Control
+  wire [10:0] alu_crtl_input;
   assign alu_crtl_input = {instruction[30], instruction[14:12], instruction[6:0]};
 
   /***** Register declarations *****/
@@ -130,7 +131,7 @@ module cpu(input reset,                     // positive reset signal
     .is_ecall (is_ecall),
     .rs1_dout (rs1_dout),     // output
     .rs2_dout (rs2_dout),     // output
-    .print_reg (print_reg)  //DO NOT TOUCH THIS
+    .print_reg (print_reg),  //DO NOT TOUCH THIS
     .ishalted(is_halted)
   );
 
@@ -172,7 +173,8 @@ module cpu(input reset,                     // positive reset signal
   // ---------- ALU Control Unit ----------
   alu_control_unit alu_ctrl_unit (
     .part_of_inst(alu_crtl_input),  // input
-    .alu_op(alu_op)         // output
+    .alu_op(alu_op)         // output,
+    .btype(btype)
   );
 
   // ---------- ALU ----------
