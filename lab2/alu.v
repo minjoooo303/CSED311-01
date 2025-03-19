@@ -1,4 +1,4 @@
-module alu ( 	input [2:0] alu_op,
+module alu ( 	input [3:0] alu_op,
 				input [1:0] btype, //for EQ, NE, GE, LT
 				input [31 : 0] alu_in_1, //A
 				input [31 : 0] alu_in_2, //B
