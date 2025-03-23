@@ -7,7 +7,7 @@ module alu_control_unit (input [10:0] part_of_inst,
 
 wire [6:0] opcodes;
 wire [2:0] funct3;
-wire funct7;
+wire funct7; 
 
 assign opcodes = part_of_inst[6:0];
 assign funct3 = part_of_inst[9:7];
