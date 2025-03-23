@@ -35,7 +35,7 @@ module instruction_memory #(parameter MEM_DEPTH = 1024) (input reset,
       $readmemh("non-controlflow_mem.txt", mem);
     end
   end
-
+ 
 endmodule
 
 
