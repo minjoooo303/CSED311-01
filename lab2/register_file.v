@@ -34,15 +34,18 @@ module register_file(input	reset,
   end
 
   always @(posedge clk) begin
+    rf[0] <= 0;
     if(write_enable && (rd != 0)) begin
         rf[rd] <= rd_din;
     end
   end
 
-  always @(posedge clk) begin
-    ishalted <= 0;
+  always @(*) begin
     if(is_ecall && rf[17] == 10) begin
-      ishalted <= 1;
+      ishalted = 1;
+    end
+    else begin
+      ishalted = 0;
     end
   end
 
