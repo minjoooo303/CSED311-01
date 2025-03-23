@@ -10,7 +10,7 @@ module alu ( 	input [3:0] alu_op,
 	always @(*) begin
 		alu_bcond = 0;
 		case (alu_op) 
-			4'b0000: alu_result = alu_in_1 + alu_in_2; //ADD
+			4'b0000: begin alu_result = alu_in_1 + alu_in_2; end //ADD
 			4'b0001: begin //SUB, Branch
 				alu_result = alu_in_1 - alu_in_2;	
 				case (btype)
@@ -21,25 +21,25 @@ module alu ( 	input [3:0] alu_op,
 				endcase
 			end
 			4'b0010: begin alu_result = alu_in_1; end
-			4'b0011: alu_result = ~alu_in_1; //NOT
-			4'b0100: alu_result = alu_in_1 & alu_in_2; //AND
-			4'b0101: alu_result = alu_in_1 | alu_in_2; //OR
+			4'b0011: begin alu_result = ~alu_in_1; end //NOT
+			4'b0100: begin alu_result = alu_in_1 & alu_in_2; end //AND
+			4'b0101: begin alu_result = alu_in_1 | alu_in_2; end //OR
 
-			4'b0110: alu_result = ~(alu_in_1 & alu_in_2); //NAND
-			4'b0111: alu_result = ~(alu_in_1 | alu_in_2); //NOR
+			4'b0110: begin alu_result = ~(alu_in_1 & alu_in_2); end //NAND
+			4'b0111: begin alu_result = ~(alu_in_1 | alu_in_2); end //NOR
 
-			4'b1000: alu_result = alu_in_1 ^ alu_in_2; //XOR
-			4'b1001: alu_result = ~(alu_in_1 ^ alu_in_2); //XNOR
+			4'b1000: begin alu_result = alu_in_1 ^ alu_in_2; end //XOR
+			4'b1001: begin alu_result = ~(alu_in_1 ^ alu_in_2); end //XNOR
 
-			4'b1010: alu_result = alu_in_1 << alu_in_2; //SLL
-			4'b1011: alu_result = alu_in_1 >> alu_in_2; //SRL
+			4'b1010: begin alu_result = alu_in_1 << alu_in_2; end //SLL
+			4'b1011: begin alu_result = alu_in_1 >> alu_in_2; end //SRL
 
-			4'b1100: alu_result = alu_in_1 <<< alu_in_2; //Arithmetic Left Shift
-			4'b1101: alu_result = alu_in_1 >>> alu_in_2; //SRA
+			4'b1100: begin alu_result = alu_in_1 <<< alu_in_2; end //Arithmetic Left Shift
+			4'b1101: begin alu_result = alu_in_1 >>> alu_in_2; end //SRA
 
-			4'b1110: alu_result = ~alu_in_1 + 1; //NEG
-			4'b1111: alu_result = 0;
-			default: alu_result = 0;
+			4'b1110: begin alu_result = ~alu_in_1 + 1; end //NEG
+			4'b1111: begin alu_result = 0; end 
+			default: begin alu_result = 0; end 
 
 		endcase
 	end
