@@ -32,7 +32,7 @@ module instruction_memory #(parameter MEM_DEPTH = 1024) (input reset,
         // DO NOT TOUCH COMMENT ABOVE
 
       // Provide path of the file including instructions with binary format
-      $readmemh("basic_mem.txt", mem);
+      $readmemh("non-controlflow_mem.txt", mem);
     end
   end
 
