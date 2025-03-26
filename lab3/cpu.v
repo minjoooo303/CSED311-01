@@ -92,7 +92,7 @@ module cpu(input reset,       // positive reset signal
   assign b = B;
   assign op = IR[6:0];
   assign ir = IR;
-  assign alu_crtl_input = {instruction[30], instruction[14:12]};
+  assign alu_crtl_input = {IR[30], IR[14:12], IR[6:0]};
   assign CurrIsNextPC = (pcwritenotcond && !alu_bcond) || pcwrite;
   assign MDR_wire = MDR;
   assign ALUOut_wire = ALUOut;
