@@ -1,6 +1,6 @@
 `include "opcodes.v"
 //# part_of_inst 수정해야함 !!
-module alu_control_unit (input [3:0] part_of_inst, 
+module ALUControlUnit (input [3:0] part_of_inst, 
                 input [1:0] ALUOp,
                 output reg[3:0] alu_op,
                 output reg [1:0] btype
