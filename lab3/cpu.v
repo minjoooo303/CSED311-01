@@ -37,8 +37,6 @@ module cpu(input reset,       // positive reset signal
   wire [31:0] rs1_dout;
   wire [31:0] rs2_dout; 
   wire write_enable; //RegWrite
-  wire [31:0] rs1_dout; 
-  wire [31:0] rs2_dout;
   
   // reg_mux_alu_a
   wire alusrca;
@@ -61,7 +59,6 @@ module cpu(input reset,       // positive reset signal
   wire [6:0] op;
   wire pcwritenotcond;
   wire pcwrite;
-  wire iord;
   wire irwrite;
   wire pcsource;
   wire ALUOp;
@@ -116,14 +113,14 @@ module cpu(input reset,       // positive reset signal
     .in0(current_pc),
     .in1(aluout),
     .out(mem_addr)
-  )
+  );
 
   mux mem_mux_reg(
     .s(mem_to_reg),
     .in0(aluout),
     .in1(MDR),
     .out(write_data_reg)
-  )
+  );
 
   // ---------- Register File ----------
   RegisterFile reg_file(
@@ -144,16 +141,16 @@ module cpu(input reset,       // positive reset signal
     .in0(current_pc),
     .in1(a),
     .out(mux_a_out)
-  )
+  );
 
   mux4 reg_mux_alu_b(
     .s(alusrcb),
     .in0(current_pc),
     .in1(b),
     .in2(4),
-    .in3(imm_gen_out).
+    .in3(imm_gen_out),
     .out(mux_b_out)
-  )
+  );
 
   // ---------- Memory ----------
   Memory memory(
@@ -216,7 +213,7 @@ module cpu(input reset,       // positive reset signal
     .in0(alu_result),
     .in1(ALUOut_wire),
     .out(next_pc)
-  )
+  );
 
   initial begin
     IR = 0;
