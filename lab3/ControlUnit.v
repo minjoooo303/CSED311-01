@@ -81,7 +81,7 @@ module ControlUnit (
         PCWrite = 0;
         IorD = 0;
         IRWrite = 0;
-        PCSource,
+        PCSource = 0;
         ALUOp = 0;
         ALUSrcA = 0;
         ALUSrcB = 0;
@@ -133,6 +133,8 @@ module ControlUnit (
                     `JAL: begin
                         ALUSrcB = 2'b10;
                     end
+                    default: begin
+                    end
                 endcase
             end
             `MEM: begin
@@ -140,6 +142,7 @@ module ControlUnit (
                 case (part_of_inst)
                     `LOAD: begin mem_read = 1; end
                     `STORE: begin mem_write = 1; end
+                    default: begin end
                 endcase
             end
             `WB: begin
@@ -151,6 +154,8 @@ module ControlUnit (
                     `JALR, `JAL: begin
                         PCWrite = 1;
                         PCSource = 1;
+                    end
+                    default: begin
                     end
                 endcase
             end
