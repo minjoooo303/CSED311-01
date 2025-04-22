@@ -63,9 +63,7 @@ module cpu(input reset,       // positive reset signal
 
 
   /***** wire *****/
-  wire [4:0] if_id_rs1;
-  wire [4:0] register_rs1;
-  wire [4:0] register_rs2;
+  
   wire [4:0] WB_rd;
   wire [31:0] alu_in1;
   wire [31:0] alu_in2;
@@ -73,9 +71,7 @@ module cpu(input reset,       // positive reset signal
   wire alu_zero;
   wire [31:0] dmem_dout;
   wire [31:0] wb_out;
-  wire [31:0] next_pc;
-  wire [31:0] current_pc;
-  wire [31:0] instruction;
+  
   wire mem_read;
   wire mem_to_reg;
   wire mem_write;
@@ -84,10 +80,27 @@ module cpu(input reset,       // positive reset signal
   wire pc_to_reg;
   wire alu_op;
   wire is_ecall;
+  wire ctrl_unit_input;
+  wire is_halted;
+  wire [31:0] ecall_data;
 
   assign if_id_rs1 = IF_ID_inst[19:15];
   assign register_rs2 = IF_ID_inst[24:20];
   assign rd = IF_ID_inst[11:7];
+  assign ctrl_unit_input = {IF_ID_inst[30], IF_ID_inst[14:12], IF_ID_inst[6:0]};
+  assign is_halted = is_ecall && ecall_data == 10;
+
+  //if
+  wire [31:0] next_pc;
+  wire [31:0] current_pc;
+  wire [31:0] instruction;
+
+  //id
+  wire [4:0] if_id_rs1;
+  wire [4:0] register_rs1;
+  wire [4:0] register_rs2;
+  wire WB_rd;
+
 
 
 
@@ -118,12 +131,15 @@ module cpu(input reset,       // positive reset signal
   // Update IF/ID pipeline registers here
   always @(posedge clk) begin
     if (reset) begin //??
+      IF_ID_inst <= 0;
     end
     else begin
-      IF_ID_inst <= instruction;
+        IF_ID_inst <= instruction;
     end
   end
 
+  //-----------ID-------------
+  //--------------------------
   // ecall mux
   mux is_ecall(
     .s(is_ecall),      // input
@@ -132,14 +148,27 @@ module cpu(input reset,       // positive reset signal
     .out(register_rs1)     // output
   );
 
+  HazardDetectionUnit HazardDetectionUnit(
+    .rs1(register_rs1),
+    .rs2 (register_rs2),          // input
+    .rd(WB_rd),
+    .is_rs1_used(),
+    .is_rs2_used(),
+    .mem_read(),
+    .is_ecall(is_ecall),
+    .pc_write(),
+    .IF_ID_write(),
+    .is_hazard(is_hazard)
+  )
+
   // ---------- Register File ----------
   RegisterFile reg_file (
     .reset (reset),        // input
     .clk (clk),          // input
     .rs1 (register_rs1),          // input
     .rs2 (register_rs2),          // input
-    .rd (MEM_WB_rd),           // input
-    .rd_din (write_data_reg),       // input
+    .rd (WB_rd),           // input
+    .rd_din (WB_rd_din),       // input
     .write_enable (MEM_WB_reg_write),    // input
     .rs1_dout (rs1_dout),     // output
     .rs2_dout (rs2_dout),      // output
@@ -169,8 +198,36 @@ module cpu(input reset,       // positive reset signal
   // Update ID/EX pipeline registers here
   always @(posedge clk) begin
     if (reset) begin
+      ID_EX_rs1_data <= 0;
+      ID_EX_rs2_data <= 0;
+      ID_EX_ALU_ctrl_unit_input <= 0;
+      ID_EX_imm <= 0;
+      ID_EX_rs1 <= 0;
+      ID_EX_rs2 <= 0;
+      ID_EX_rd <= 0;
+      ID_EX_mem_read <= 0;
+      ID_EX_mem_to_reg <= 0;
+      ID_EX_mem_write <= 0;
+      ID_EX_reg_write <= 0;
+      ID_EX_alu_src <= 0;
+      ID_EX_is_halted <= 0;
+      ID_EX_alu_op <= 0;
     end
     else begin
+      ID_EX_rs1_data <= rs1_dout;
+      ID_EX_rs2_data <= rs2_dout;
+      ID_EX_ALU_ctrl_unit_input <= ctrl_unit_input;
+      ID_EX_imm <= imm_gen_out;
+      ID_EX_rs1 <= register_rs1;
+      ID_EX_rs2 <= register_rs2;
+      ID_EX_rd <= rd;
+      ID_EX_mem_read <= mem_read;
+      ID_EX_mem_to_reg <= mem_to_reg;
+      ID_EX_mem_write <= hazard_mem_write;
+      ID_EX_reg_write <= hazard_reg_write;
+      ID_EX_alu_src <= alu_src;
+      ID_EX_is_halted <= is_halted;
+      ID_EX_alu_op <= alu_op;
     end
   end
 
@@ -218,8 +275,17 @@ module cpu(input reset,       // positive reset signal
   // Update EX/MEM pipeline registers here
   always @(posedge clk) begin
     if (reset) begin
+      EX_MEM_mem_write <= 0;
+      EX_MEM_mem_read <= 0;
+      EX_MEM_mem_to_reg <= 0;
+      EX_MEM_reg_write <= 0;  
+      EX_MEM_alu_out <= 0;
+      EX_MEM_dmem_data <= 0;
+      EX_MEM_rd <= 0;
+      EX_MEM_is_halted <= 0;
     end
     else begin
+
     end
   end
 
