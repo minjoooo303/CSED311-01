@@ -63,8 +63,9 @@ module cpu(input reset,       // positive reset signal
 
 
   /***** wire *****/
-  wire [4:0] rs1;
-  wire [4:0] rs2;
+  wire [4:0] if_id_rs1;
+  wire [4:0] register_rs1;
+  wire [4:0] register_rs2;
   wire [4:0] WB_rd;
   wire [31:0] alu_in1;
   wire [31:0] alu_in2;
@@ -84,8 +85,8 @@ module cpu(input reset,       // positive reset signal
   wire alu_op;
   wire is_ecall;
 
-  assign rs1 = IF_ID_inst[19:15];
-  assign rs2 = IF_ID_inst[24:20];
+  assign if_id_rs1 = IF_ID_inst[19:15];
+  assign register_rs2 = IF_ID_inst[24:20];
   assign rd = IF_ID_inst[11:7];
 
 
@@ -123,12 +124,20 @@ module cpu(input reset,       // positive reset signal
     end
   end
 
+  // ecall mux
+  mux is_ecall(
+    .s(is_ecall),      // input
+    .in1(17),    // input
+    .in0(if_id_rs1),    // input
+    .out(register_rs1)     // output
+  );
+
   // ---------- Register File ----------
   RegisterFile reg_file (
     .reset (reset),        // input
     .clk (clk),          // input
-    .rs1 (rs1),          // input
-    .rs2 (rs2),          // input
+    .rs1 (register_rs1),          // input
+    .rs2 (register_rs2),          // input
     .rd (MEM_WB_rd),           // input
     .rd_din (write_data_reg),       // input
     .write_enable (MEM_WB_reg_write),    // input
