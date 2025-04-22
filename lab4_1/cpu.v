@@ -54,6 +54,7 @@ module cpu(input reset,       // positive reset signal
   // From others
   reg MEM_WB_mem_to_reg_src_1;
   reg MEM_WB_mem_to_reg_src_2;
+  reg [4:0] MEM_WB_rd; // 만듦
 
   /***** forwordings *****/
   reg forward_a;
@@ -64,7 +65,8 @@ module cpu(input reset,       // positive reset signal
   /***** wire *****/
   wire [4:0] rs1;
   wire [4:0] rs2;
-  wire [4:0] rd;
+  wire [4:0] WB_rd;
+  wire [31:0] alu_in1;
   wire [31:0] alu_in2;
   wire [31:0] alu_result;
   wire alu_zero;
@@ -127,7 +129,7 @@ module cpu(input reset,       // positive reset signal
     .clk (clk),          // input
     .rs1 (rs1),          // input
     .rs2 (rs2),          // input
-    .rd (rd),           // input
+    .rd (MEM_WB_rd),           // input
     .rd_din (write_data_reg),       // input
     .write_enable (MEM_WB_reg_write),    // input
     .rs1_dout (rs1_dout),     // output
@@ -169,10 +171,28 @@ module cpu(input reset,       // positive reset signal
     .alu_op()         // output
   );
 
+  // 
+  mux4 A_mux(
+    .s(forward_a),
+    .in0(MEM_alu_out),
+    .in1(WB_rd_din),
+    .in2(ID_EX_rs1_data),
+    .in3(0),
+    .out(alu_in1)
+  );
+  mux4 B_mux(
+    .s(forward_b),
+    .in0(MEM_alu_out),
+    .in1(WB_rd_din),
+    .in2(ID_EX_rs2_data),
+    .in3(0),
+    .out(alu_in2)
+  );
+
   // ---------- ALU ----------
   ALU alu (
     .alu_op(ID_EX_alu_op),      // input
-    .alu_in_1(ID_EX_rs1_data),    // input  
+    .alu_in_1(alu_in1),    // input  
     .alu_in_2(alu_in2),    // input
     .alu_result(alu_result),  // output
     .alu_zero(alu_zero)     // output
@@ -210,7 +230,7 @@ module cpu(input reset,       // positive reset signal
     .s(MEM_WB_mem_to_reg),      // input
     .in1(MEM_WB_mem_to_reg_src_1),    // dmem input 
     .in0(MEM_WB_mem_to_reg_src_2),    // alu input
-    .out(wb_out)     // output
+    .out(MEM_WB_rd)     // output
   );
 
   // ---------- Forwarding ----------
@@ -219,7 +239,7 @@ module cpu(input reset,       // positive reset signal
     .ID_EX_rs2(ID_EX_rs2_data),
     .EX_MEM_rd(EX_MEM_rd),
     .EX_MEM_reg_write(EX_MEM_reg_write),
-    .MEM_WB_rd(wb_out),
+    .MEM_WB_rd(MEM_WB_rd),
     .MEM_WB_reg_write(MEM_WB_reg_write),
     .forward_a(forward_a),
     .forward_b(forward_b)
@@ -229,7 +249,7 @@ module cpu(input reset,       // positive reset signal
     .ID_EX_rs1(ID_EX_rs1_data),
     .EX_MEM_rd(EX_MEM_rd),
     .EX_MEM_reg_write(EX_MEM_reg_write),
-    .MEM_WB_rd(wb_out),
+    .MEM_WB_rd(MEM_WB_rd),
     .MEM_WB_reg_write(MEM_WB_reg_write)
   );
 
