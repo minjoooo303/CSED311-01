@@ -13,7 +13,7 @@ wire [31:0] pc_plus4;
 assign pc_plus4 = pc + 32'd4;
 
 wire [4:0] pc_idx;
-assign pc_idx = pc[6:2];     
+assign pc_idx = pc[6:2];    
 
 wire [4:0] bhsr_out;
 wire predict_taken;
@@ -22,13 +22,18 @@ wire [31:0] predicted_target;
 
 
 wire [4:0] pht_idx;
-assign pht_idx = bhsr_out ^ pc_idx;
 
 wire btb_sig;
 assign btb_sig = tagtable_hit & predict_taken;
 
 
 // 모듈 인스턴스
+gshare_xor gshare_xor(
+    .pc_idx(pc_idx),
+    .BHSR_output(bhsr_out),
+    .PHT_idx(pht_idx)
+)
+
 BHSR bhsr (
     .reset(reset), //input
     .clk(clk),
