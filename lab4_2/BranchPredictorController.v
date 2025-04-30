@@ -13,7 +13,7 @@ wire [31:0] pc_plus4;
 assign pc_plus4 = pc + 32'd4;
 
 wire [4:0] pc_idx;
-assign pc_idx = pc[6:2];          // index: PC[6:2] (32개 entry)
+assign pc_idx = pc[6:2];     
 
 wire [4:0] bhsr_out;
 wire predict_taken;
