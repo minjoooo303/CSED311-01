@@ -1,4 +1,4 @@
-module BHSR() ( 
+module BHSR ( 
     input reset,
     input clk,
     input update_en,       // 업데이트할지 신호
