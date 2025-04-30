@@ -32,7 +32,7 @@ gshare_xor gshare_xor(
     .pc_idx(pc_idx),
     .BHSR_output(bhsr_out),
     .PHT_idx(pht_idx)
-)
+);
 
 BHSR bhsr (
     .reset(reset), //input
